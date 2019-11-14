@@ -6,7 +6,7 @@ import "./TextList.css";
 
 class TextList extends Component {
   static defaultProps = {
-    numOfTexts: 5
+    numOfTexts: 10
   };
   constructor(props) {
     super(props);

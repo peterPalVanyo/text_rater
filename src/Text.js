@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import './Text.css'
 
 class Text extends Component {
 
@@ -7,7 +8,7 @@ class Text extends Component {
             <div className='Text'>
                 <div className='Text-buttons'>
                     <i className='fas fa-arrow-up' onClick={this.props.upRate}></i>
-                        <span>{this.props.rate}</span>
+                        <span className='Text-rate'>{this.props.rate}</span>
                     <i className='fas fa-arrow-down' onClick={this.props.downRate}></i>
                 </div>
                 <div className='Text-text'>
