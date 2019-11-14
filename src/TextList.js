@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Text from "./Text";
 import rate from "./image/rate.svg";
 import "./TextList.css";
 
@@ -10,6 +11,7 @@ class TextList extends Component {
   constructor(props) {
     super(props);
     this.state = { texts: [] };
+    this.handleRate = this.handleRate.bind(this);
   }
 
   async componentDidMount() {
@@ -17,11 +19,15 @@ class TextList extends Component {
     const texts = [];
     while (texts.length < this.props.numOfTexts) {
       let resp = await axios.get("https://api.quotable.io/random");
-      texts.push(resp.data.content);
+      texts.push({ id: resp.data._id, text: resp.data.content, rate: 0 });
     }
     this.setState({ texts: texts });
   }
-
+  handleRate(id, change) {
+        this.setState( state => ({
+            texts: state.texts.map( text => text.id === id ? {...text, rate: text.rate+change} : text)
+        }))
+  }
   render() {
     return (
       <div className="TextList">
@@ -29,12 +35,20 @@ class TextList extends Component {
           <h1 className="TextList-title">
             <span>Rate</span> Them!
           </h1>
-          <object type="image/svg+xml" data={rate}></object>
+          <object type="image/svg+xml" data={rate}>
+            vote
+          </object>
           <button className="TextList-getmore">New Texts</button>
         </div>
         <div className="TextList-texts">
           {this.state.texts.map(text => (
-            <div>{text}</div>
+            <Text
+              key={text.id}
+              text={text.text}
+              rate={text.rate}
+              upRate={() => this.handleRate(text.id, 1)}
+              downRate={() => this.handleRate(text.id, -1)}
+            />
           ))}
         </div>
       </div>
