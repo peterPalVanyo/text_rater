@@ -1,0 +1,44 @@
+.TextList {
+  display: flex;
+  width: 80%;
+  height: 80%;
+}
+
+.TextList-side {
+  background: rgb(237, 201, 81);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  text-align: center;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.1),
+    inset 0 0 25px rgb(237, 201, 81);
+  z-index: 2;
+}
+
+.TextList object {
+  width: 50%;
+  border-radius: 50%;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.1);
+}
+
+.TextList-title {
+  font-size: 4rem;
+  margin: 2rem;
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.6rem;
+}
+.TextList-title span {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.TextList-texts {
+  height: 90%;
+  background: white;
+  align-self: center;
+  width: 70%;
+  overflow: scroll;
+  box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.1);
+}
