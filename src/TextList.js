@@ -10,11 +10,14 @@ class TextList extends Component {
   };
   constructor(props) {
     super(props);
-    this.state = { texts: [] };
+    this.state = { texts: JSON.parse(window.localStorage.getItem('texts') || '[]') };
     this.handleRate = this.handleRate.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    if(this.state.texts.length === 0) this.getTexts()
+  }
+  async getTexts() {
     //_id, content, author
     const texts = [];
     while (texts.length < this.props.numOfTexts) {
@@ -22,6 +25,7 @@ class TextList extends Component {
       texts.push({ id: resp.data._id, text: resp.data.content, rate: 0 });
     }
     this.setState({ texts: texts });
+    window.localStorage.setItem('texts', JSON.stringify(texts))
   }
   handleRate(id, change) {
         this.setState( state => ({
