@@ -6,16 +6,19 @@ import "./TextList.css";
 
 class TextList extends Component {
   static defaultProps = {
-    numOfTexts: 10
+    numOfTexts: 3
   };
   constructor(props) {
     super(props);
-    this.state = { texts: JSON.parse(window.localStorage.getItem('texts') || '[]') };
+    this.state = {
+      texts: JSON.parse(window.localStorage.getItem("texts") || "[]")
+    };
     this.handleRate = this.handleRate.bind(this);
+    this.handleClick = this.handleClick.bind(this)
   }
 
   componentDidMount() {
-    if(this.state.texts.length === 0) this.getTexts()
+    if (this.state.texts.length === 0) this.getTexts();
   }
   async getTexts() {
     //_id, content, author
@@ -24,25 +27,35 @@ class TextList extends Component {
       let resp = await axios.get("https://api.quotable.io/random");
       texts.push({ id: resp.data._id, text: resp.data.content, rate: 0 });
     }
-    this.setState({ texts: texts });
-    window.localStorage.setItem('texts', JSON.stringify(texts))
+    this.setState(state => ({ texts: [...state.texts, ...texts] }),
+    () => window.localStorage.setItem("texts", JSON.stringify(this.state.texts))
+    );
   }
   handleRate(id, change) {
-        this.setState( state => ({
-            texts: state.texts.map( text => text.id === id ? {...text, rate: text.rate+change} : text)
-        }))
+    this.setState(
+      state => ({
+        texts: state.texts.map(text =>
+          text.id === id ? { ...text, rate: text.rate + change } : text
+        )
+      }), //immediately call to save the change
+      () =>
+        window.localStorage.setItem("texts", JSON.stringify(this.state.texts))
+    );
+  }
+  handleClick() {
+    this.getTexts()
   }
   render() {
     return (
       <div className="TextList">
         <div className="TextList-side">
           <h1 className="TextList-title">
-            <span>Rate</span> Them!
+            <span>Rate Them </span>All!
           </h1>
           <object type="image/svg+xml" data={rate}>
             vote
           </object>
-          <button className="TextList-getmore">New Texts</button>
+          <button className="TextList-getmore" onClick={this.handleClick}>New Texts</button>
         </div>
         <div className="TextList-texts">
           {this.state.texts.map(text => (
