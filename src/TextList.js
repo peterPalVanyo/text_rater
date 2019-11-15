@@ -11,25 +11,36 @@ class TextList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      texts: JSON.parse(window.localStorage.getItem("texts") || "[]"), loading: false
+      texts: JSON.parse(window.localStorage.getItem("texts") || "[]"),
+      loading: false
     };
+    this.doubleCheck = new Set(this.state.texts.map(text => text.id));
     this.handleRate = this.handleRate.bind(this);
-    this.handleClick = this.handleClick.bind(this)
+    this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
     if (this.state.texts.length === 0) this.getTexts();
   }
   async getTexts() {
-    //_id, content, author
-    const texts = [];
-    while (texts.length < this.props.numOfTexts) {
-      let resp = await axios.get("https://api.quotable.io/random");
-      texts.push({ id: resp.data._id, text: resp.data.content, rate: 0 });
+    try {
+      //_id, content, author
+      const texts = [];
+      while (texts.length < this.props.numOfTexts) {
+        let resp = await axios.get("https://api.quotable.io/random");
+        if (!this.doubleCheck.has(resp.data._id)) {
+          texts.push({ id: resp.data._id, text: resp.data.content, rate: 0 });
+        }
+      }
+      this.setState(
+        state => ({ texts: [...state.texts, ...texts], loading: false }),
+        () =>
+          window.localStorage.setItem("texts", JSON.stringify(this.state.texts))
+      );
+    } catch (e) {
+      alert(e);
+      this.setState({loading: false})
     }
-    this.setState(state => ({ texts: [...state.texts, ...texts], loading:false }),
-    () => window.localStorage.setItem("texts", JSON.stringify(this.state.texts))
-    );
   }
   handleRate(id, change) {
     this.setState(
@@ -44,17 +55,19 @@ class TextList extends Component {
   }
   handleClick() {
     //this.getText as a callback function
-    this.setState({loading: true}, this.getTexts)
+    this.setState({ loading: true }, this.getTexts);
   }
   render() {
-    if(this.state.loading) {
+    if (this.state.loading) {
       return (
-        <div className='TextList-loading'>
-          <i class="fa fa-cog fa-spin fa-8x fa-fw"></i>
-          <h1 className='TextList-title'>Loading...</h1>
+        <div className="TextList-loading">
+          <i className="fa fa-cog fa-spin fa-8x fa-fw"></i>
+          <h1 className="TextList-title">Loading...</h1>
         </div>
-      )
+      );
     }
+    //descending order
+    let texts = this.state.texts.sort((a, b) => b.rate - a.rate);
     return (
       <div className="TextList">
         <div className="TextList-side">
@@ -64,10 +77,12 @@ class TextList extends Component {
           <object type="image/svg+xml" data={rate}>
             vote
           </object>
-          <button className="TextList-getmore" onClick={this.handleClick}>New Texts</button>
+          <button className="TextList-getmore" onClick={this.handleClick}>
+            New Texts
+          </button>
         </div>
         <div className="TextList-texts">
-          {this.state.texts.map(text => (
+          {texts.map(text => (
             <Text
               key={text.id}
               text={text.text}
