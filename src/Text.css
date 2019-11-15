@@ -34,3 +34,31 @@
     margin: 10px;
     cursor: pointer;
 }
+
+@keyframes move-up {
+    0%, 50%, 100% {
+        transform:translateY(0)
+    } 25%, 75% {
+        transform: translateY(-3px);
+    }
+}
+@keyframes move-down {
+    0%, 50%, 100% {
+        transform:translateY(0)
+    } 25%, 75% {
+        transform: translateY(3px);
+    }
+}
+
+.fa-arrow-up:hover {
+    animation-name: move-up;
+    animation-duration: 0.7s;
+    animation-timing-function: ease-out;
+    color:rgb(229, 106, 119);
+}
+.fa-arrow-down:hover {
+    animation-name: move-down;
+    animation-duration: 0.7s;
+    animation-timing-function: ease-out;
+    color: rgb(237, 201, 81);
+}
