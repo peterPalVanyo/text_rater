@@ -11,7 +11,7 @@ class TextList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      texts: JSON.parse(window.localStorage.getItem("texts") || "[]")
+      texts: JSON.parse(window.localStorage.getItem("texts") || "[]"), loading: false
     };
     this.handleRate = this.handleRate.bind(this);
     this.handleClick = this.handleClick.bind(this)
@@ -27,7 +27,7 @@ class TextList extends Component {
       let resp = await axios.get("https://api.quotable.io/random");
       texts.push({ id: resp.data._id, text: resp.data.content, rate: 0 });
     }
-    this.setState(state => ({ texts: [...state.texts, ...texts] }),
+    this.setState(state => ({ texts: [...state.texts, ...texts], loading:false }),
     () => window.localStorage.setItem("texts", JSON.stringify(this.state.texts))
     );
   }
@@ -43,9 +43,18 @@ class TextList extends Component {
     );
   }
   handleClick() {
-    this.getTexts()
+    //this.getText as a callback function
+    this.setState({loading: true}, this.getTexts)
   }
   render() {
+    if(this.state.loading) {
+      return (
+        <div className='TextList-loading'>
+          <i class="fa fa-cog fa-spin fa-8x fa-fw"></i>
+          <h1 className='TextList-title'>Loading...</h1>
+        </div>
+      )
+    }
     return (
       <div className="TextList">
         <div className="TextList-side">
